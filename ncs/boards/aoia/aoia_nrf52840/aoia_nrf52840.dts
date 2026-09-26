@@ -1,0 +1,57 @@
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi>
+#include <zephyr/dt-bindings/pinctrl/nrf-pinctrl.h>
+
+/ {
+    model = "AirOasis Teyleten nRF52840 (nice!nano UF2)";
+    compatible = "aoia,teyleten-nrf52840";
+    chosen {
+        zephyr,sram = &sram0;
+        zephyr,flash = &flash0;
+        zephyr,code-partition = &slot0_partition;
+        zephyr,console = &cdc_acm_uart0;
+        zephyr,shell-uart = &cdc_acm_uart0;
+    };
+};
+
+&gpiote { status = "okay"; };
+&gpio0 { status = "okay"; };
+&gpio1 { status = "okay"; };
+&ieee802154 { status = "okay"; };
+
+&pinctrl {
+    aoia_uart_default: aoia_uart_default {
+        group1 { psels = <NRF_PSEL(UART_TX, 0, 8)>, <NRF_PSEL(UART_RX, 0, 6)>; };
+    };
+    aoia_uart_sleep: aoia_uart_sleep {
+        group1 {
+            psels = <NRF_PSEL(UART_TX, 0, 8)>, <NRF_PSEL(UART_RX, 0, 6)>;
+            low-power-enable;
+        };
+    };
+};
+&uart0 {
+    status = "okay";
+    current-speed = <9600>;
+    pinctrl-0 = <&aoia_uart_default>;
+    pinctrl-1 = <&aoia_uart_sleep>;
+    pinctrl-names = "default", "sleep";
+};
+zephyr_udc0: &usbd {
+    status = "okay";
+    cdc_acm_uart0: cdc_acm_uart0 { compatible = "zephyr,cdc-acm-uart"; };
+};
+&flash0 {
+    partitions {
+        compatible = "fixed-partitions";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        /* Preserve installed S140 v6 + MBR, but do not run SoftDevice. */
+        mbr_softdevice: partition@0 { label = "mbr-softdevice"; reg = <0 0x26000>; read-only; };
+        slot0_partition: partition@26000 { label = "image-0"; reg = <0x26000 0xc3000>; };
+        storage_partition: partition@e9000 { label = "storage"; reg = <0xe9000 0x2000>; };
+        zboss_nvram: partition@eb000 { label = "zboss-nvram"; reg = <0xeb000 0x8000>; };
+        zboss_product_config: partition@f3000 { label = "zboss-product-config"; reg = <0xf3000 0x1000>; };
+        boot_partition: partition@f4000 { label = "adafruit-bootloader"; reg = <0xf4000 0xc000>; read-only; };
+    };
+};

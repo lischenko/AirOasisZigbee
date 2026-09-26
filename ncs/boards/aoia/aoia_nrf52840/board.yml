@@ -1,0 +1,6 @@
+board:
+  name: aoia_nrf52840
+  full_name: AirOasis Teyleten nice!nano-compatible nRF52840
+  vendor: others
+  socs:
+    - name: nrf52840

@@ -1,0 +1,24 @@
+manifest:
+  version: "0.13"
+  projects:
+    - name: ncs-zigbee
+      url: https://github.com/nrfconnect/ncs-zigbee
+      revision: v1.4.0
+      path: ncs-zigbee
+    - name: nrf
+      url: https://github.com/nrfconnect/sdk-nrf
+      revision: v3.4.0
+      import:
+        name-allowlist:
+          - zephyr
+          - nrfxlib
+          - hal_nordic
+          - cmsis
+          - cmsis_6
+          - segger
+          - mbedtls
+          - oberon-psa-crypto
+          - tf-psa-crypto
+          - zcbor
+  self:
+    path: ncs
